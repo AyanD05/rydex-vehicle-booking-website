@@ -12,14 +12,13 @@ type propType = {
 }
 type stepType = "login" | "signup" | "otp"
 const AuthModal = ({ open, onClose }: propType) => {
-  const [step, setStep] = useState<stepType>("login")
+  const [step, setStep] = useState<stepType>("otp")
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState("")
-  const {data}=useSession()
-  console.log(data)
+  const [otp,setOtp]=useState(["","","","","",""])
   const handleSignUp = async () => {
     setLoading(true)
     try {
@@ -46,6 +45,9 @@ const AuthModal = ({ open, onClose }: propType) => {
 
     console.log(res)
   }
+  const handleGoogleLogin=async()=>{
+    await signIn("google");
+  }
   return (
     <AnimatePresence>
       {open &&
@@ -61,7 +63,7 @@ const AuthModal = ({ open, onClose }: propType) => {
                     <h1 className='text-3xl font-extrabold tracking-widest'>RYDEX</h1>
                     <p className='mt-1 text-xs text-gray-500'>Premium Vehicle Booking</p>
                   </div>
-                  <button className='w-full h-11 rounded-xl border border-black/20 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-black hover:text-white transition'>
+                  <button className='w-full h-11 rounded-xl border border-black/20 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-black hover:text-white transition' onClick={handleGoogleLogin}>
                     <Image src="/google.png" alt='Google' width={20} height={20} /> Continue with Google
                   </button>
                   <div className='flex items-center gap-4 my-6'>
@@ -114,6 +116,20 @@ const AuthModal = ({ open, onClose }: propType) => {
 
                         </div>
                         <p className='mt-6 text-center text-sm text-gray-500'>Already have an account? <div onClick={() => setStep("signup")} className='text-black font-medium hover:underline'>Sign In</div></p>
+                      </motion.div>
+                    )}
+                    {step=="otp" && (
+                      <motion.div key="otp" initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:-20}}>
+                        <h2 className='text-xl font-semibold'>Verify Email</h2>
+                        <div className='mt-6 flex justify-between gap-2'>
+                          {otp.map((digit,i)=>(
+                            <input key={i} id={`otp-${i}`}
+                            value={digit}
+                            maxLength={1}
+                            className='w-10 h-12 sm:w-12 text-center text-lg font-semibold rounded-xl bg-white border border-black/20 outline-none'>
+                            </input>
+                          ))}
+                        </div>
                       </motion.div>
                     )}
                   </div>
